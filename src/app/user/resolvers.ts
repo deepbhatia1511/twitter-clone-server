@@ -15,7 +15,7 @@ const cc = {
          responseType: "json"
       })
       console.log(data)
-      console.log("helloooooooooo")
+      console.log("hellooooooooo")
       const existingUser = await prismaClient.user.findUnique({
          where: {email: data.email}
       })
