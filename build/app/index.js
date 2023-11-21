@@ -39,10 +39,9 @@ function initServer() {
             }
         });
         yield server.start();
-        app.use('/graphql', (0, express4_1.expressMiddleware)(server, {
-            context: ({ req, res }) => __awaiter(this, void 0, void 0, function* () {
+        app.use('/graphql', (0, express4_1.expressMiddleware)(server, { context: ({ req, res }) => __awaiter(this, void 0, void 0, function* () {
                 return {
-                    user: req.headers.authorization ? jwt_1.default.decodeToken(req.headers.authorization.split(" ")[1]) : undefined
+                    user: req.headers.authorization ? jwt_1.default.decodeToken(req.headers.authorization.split("Bearer ")[1]) : undefined,
                 };
             })
         }));

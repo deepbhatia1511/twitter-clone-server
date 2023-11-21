@@ -15,7 +15,7 @@ const cc = {
          responseType: "json"
       })
       console.log(data)
-      console.log("hellooooooooo")
+      console.log("hellooooooooooo")
       const existingUser = await prismaClient.user.findUnique({
          where: {email: data.email}
       })
@@ -42,7 +42,6 @@ const cc = {
    },
    
    getCurrentUser: async(parent: any, args: any, ctx: GraphqlContext) => {
-      console.log(ctx)
       const id = ctx.user?.id
       if(!id) return null
       
