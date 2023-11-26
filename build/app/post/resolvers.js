@@ -9,14 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// BACKEND INITIALIZATION
-const app_1 = require("./app");
-function init() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const app = yield (0, app_1.initServer)();
-        app.listen(8000, () => {
-            console.log("Server started on port 8000");
+exports.ddd = void 0;
+const db_1 = require("../../clients/db");
+const ccc = {
+    createTweet: (parent, { payload }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!ctx.user)
+            throw new Error("LogIn to your account to post something");
+        const tweet = yield db_1.prismaClient.tweet.create({
+            data: {
+                content: payload.content,
+                image: payload.image,
+                author: { connect: { id: ctx.user.id } }
+            }
         });
-    });
-}
-init();
+        return tweet;
+    })
+};
+// const miscResolvers = {
+//    Post: {
+//       author: (parent: Post) => prismaClient.user.findUnique({where: {id: parent.authorId}})
+//    }
+// }
+exports.ddd = { ccc };

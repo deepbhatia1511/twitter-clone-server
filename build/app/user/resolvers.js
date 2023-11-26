@@ -16,7 +16,7 @@ exports.dd = void 0;
 const db_1 = require("../../clients/db");
 const jwt_1 = __importDefault(require("../../services/jwt"));
 const axios_1 = __importDefault(require("axios"));
-const cc = {
+const bbresolver = {
     verifyGoogleToken: (parent, { token }) => __awaiter(void 0, void 0, void 0, function* () {
         const googleToken = token;
         const googleOAuthURL = new URL("https://oauth2.googleapis.com/tokeninfo");
@@ -56,6 +56,15 @@ const cc = {
             return null;
         const user = yield db_1.prismaClient.user.findUnique({ where: { id } });
         return user;
+    }),
+    getUserById: (parent, { id }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        return db_1.prismaClient.user.findUnique({ where: { id } });
     })
 };
-exports.dd = { cc };
+const ccresolver = {};
+const extraResolvers = {
+    User: {
+        tweets: (parent) => db_1.prismaClient.tweet.findMany({ where: { author: { id: parent.id } } })
+    }
+};
+exports.dd = { bbresolver, ccresolver, extraResolvers };

@@ -23,20 +23,25 @@ const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)());
 const user_1 = require("./user");
+const tweet_1 = require("./tweet");
 const jwt_1 = __importDefault(require("../services/jwt"));
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         // GraphqlContext defines the structure of context object that can be passed to Apollo Server.
         const server = new server_1.ApolloServer({
             typeDefs: `                                               
-         ${user_1.User.aa},
+         ${user_1.User.aa}
+         ${tweet_1.Tweet.aaa}
+                  
          type Query {
             ${user_1.User.bb}
+            ${tweet_1.Tweet.bbb}
+         }
+         type Mutation {
+            ${tweet_1.Tweet.ccc}
          }
       `,
-            resolvers: {
-                Query: Object.assign({}, user_1.User.dd.cc)
-            }
+            resolvers: Object.assign(Object.assign({ Query: Object.assign(Object.assign({}, user_1.User.dd.bbresolver), tweet_1.Tweet.ddd.bbbresolver), Mutation: Object.assign({}, tweet_1.Tweet.ddd.cccresolver) }, user_1.User.dd.extraResolvers), tweet_1.Tweet.ddd.extraResolvers)
         });
         yield server.start();
         app.use('/graphql', (0, express4_1.expressMiddleware)(server, { context: ({ req, res }) => __awaiter(this, void 0, void 0, function* () {

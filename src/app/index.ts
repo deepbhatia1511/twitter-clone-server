@@ -9,6 +9,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 import { User } from "./user"
+import { Tweet } from "./tweet"
 import { GraphqlContext } from '../interfaces';
 import JWTService from '../services/jwt';
 
@@ -16,15 +17,27 @@ export async function initServer() {
    // GraphqlContext defines the structure of context object that can be passed to Apollo Server.
    const server = new ApolloServer<GraphqlContext>({ 
       typeDefs: `                                               
-         ${User.aa},
+         ${User.aa}
+         ${Tweet.aaa}
+                  
          type Query {
             ${User.bb}
+            ${Tweet.bbb}
+         }
+         type Mutation {
+            ${Tweet.ccc}
          }
       `,
       resolvers: {
          Query: {
-            ...User.dd.cc
-         }
+            ...User.dd.bbresolver,
+            ...Tweet.ddd.bbbresolver
+         },
+         Mutation: {
+            ...Tweet.ddd.cccresolver
+         },
+         ...User.dd.extraResolvers,
+         ...Tweet.ddd.extraResolvers
       }
    })
    

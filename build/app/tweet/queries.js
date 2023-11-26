@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cc = void 0;
-exports.cc = `#graphql
+exports.bbb = void 0;
+exports.bbb = `#graphql
+   getAllTweets: [Tweet]
 `;

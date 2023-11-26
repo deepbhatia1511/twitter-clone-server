@@ -3,9 +3,10 @@ import JWTService from "../../services/jwt"
 import { GraphqlContext } from "../../interfaces"
 import { GoogleTokenResult } from "../../interfaces"
 import axios from "axios"
+import { User } from "@prisma/client"
 
 
-const cc = {
+const bbresolver = {
    verifyGoogleToken: async(parent: any, {token}:{token: string}) => {
       const googleToken = token
       const googleOAuthURL = new URL("https://oauth2.googleapis.com/tokeninfo")
@@ -47,7 +48,20 @@ const cc = {
       
       const user = await prismaClient.user.findUnique({where: {id}})
       return user
+   },
+   
+   getUserById: async(parent: any, {id}:{id: string}, ctx: GraphqlContext) => {
+      return prismaClient.user.findUnique({where: {id}})
    }
 }
 
-export const dd = {cc}
+const ccresolver = {
+}
+
+const extraResolvers = {
+   User: {
+      tweets: (parent: User) => prismaClient.tweet.findMany({where: {author :{id: parent.id}}})
+   }
+}
+
+export const dd = {bbresolver, ccresolver, extraResolvers}
