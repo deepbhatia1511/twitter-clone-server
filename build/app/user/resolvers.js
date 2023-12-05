@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dd = void 0;
-const db_1 = require("../../clients/db");
+const prisma_1 = require("../../clients/prisma");
 const jwt_1 = __importDefault(require("../../services/jwt"));
 const axios_1 = __importDefault(require("axios"));
 const bbresolver = {
@@ -26,13 +26,13 @@ const bbresolver = {
         });
         console.log(data);
         console.log("hellooooooooooo");
-        const existingUser = yield db_1.prismaClient.user.findUnique({
+        const existingUser = yield prisma_1.prismaClient.user.findUnique({
             where: { email: data.email }
         });
         if (existingUser)
             throw new Error("User with this email already exists.");
         if (!existingUser) {
-            yield db_1.prismaClient.user.create({
+            yield prisma_1.prismaClient.user.create({
                 data: {
                     email: data.email,
                     firstName: data.given_name,
@@ -41,11 +41,11 @@ const bbresolver = {
                 }
             });
         }
-        const createdUser = yield db_1.prismaClient.user.findUnique({
+        const createdUser = yield prisma_1.prismaClient.user.findUnique({
             where: { email: data.email }
         });
         if (!createdUser)
-            throw new Error("Unable to create user.");
+            return;
         const userToken = jwt_1.default.generateTokenForUser(createdUser);
         return userToken;
     }),
@@ -54,17 +54,62 @@ const bbresolver = {
         const id = (_a = ctx.user) === null || _a === void 0 ? void 0 : _a.id;
         if (!id)
             return null;
-        const user = yield db_1.prismaClient.user.findUnique({ where: { id } });
+        const user = yield prisma_1.prismaClient.user.findUnique({ where: { id } });
         return user;
     }),
     getUserById: (parent, { id }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-        return db_1.prismaClient.user.findUnique({ where: { id } });
+        return prisma_1.prismaClient.user.findUnique({ where: { id } });
+    }),
+    userLogin: (parent, { email }) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield prisma_1.prismaClient.user.findUnique({ where: { email: email } });
+        if (!user)
+            return;
+        const userToken = jwt_1.default.generateTokenForUser(user);
+        return userToken;
     })
 };
-const ccresolver = {};
+const ccresolver = {
+    followUser: (parent, { to }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!ctx.user || !ctx.user.id)
+            throw new Error("You first need to log in to follow someone.");
+        const from = ctx.user.id;
+        yield prisma_1.prismaClient.follow.create({
+            data: {
+                follower: { connect: { id: from } },
+                following: { connect: { id: to } }
+            }
+        });
+        return true;
+    }),
+    unfollowUser: (parent, { to }, ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!ctx.user || !ctx.user.id)
+            throw new Error("You first need to log in to unfollow someone");
+        const from = ctx.user.id;
+        yield prisma_1.prismaClient.follow.delete({
+            where: { followerId_followingId: { followerId: from, followingId: to } }
+        });
+        return true;
+    })
+};
 const extraResolvers = {
     User: {
-        tweets: (parent) => db_1.prismaClient.tweet.findMany({ where: { author: { id: parent.id } } })
+        tweets: (parent) => prisma_1.prismaClient.tweet.findMany({
+            where: { author: { id: parent.id } }
+        }),
+        followers: (parent) => __awaiter(void 0, void 0, void 0, function* () {
+            const result = yield prisma_1.prismaClient.follow.findMany({
+                where: { following: { id: parent.id } },
+                include: { follower: true }
+            });
+            return result.map((e) => e.follower);
+        }),
+        followings: (parent) => __awaiter(void 0, void 0, void 0, function* () {
+            const result = yield prisma_1.prismaClient.follow.findMany({
+                where: { follower: { id: parent.id } },
+                include: { following: true }
+            });
+            return result.map((e) => e.following);
+        })
     }
 };
 exports.dd = { bbresolver, ccresolver, extraResolvers };

@@ -2,13 +2,15 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
 }
+
+
 
 model User {
    id            String @id @default(cuid())
@@ -21,7 +23,24 @@ model User {
    updatedAt     DateTime @updatedAt
 
    tweets        Tweet[]
+
+   followers     Follow[] @relation("follower")
+   followings    Follow[] @relation("following")
 }
+
+
+
+model Follow {
+   follower      User @relation("follower", fields: [followerId], references: [id])
+   followerId    String
+   
+   following     User @relation("following", fields: [followingId], references: [id])
+   followingId   String
+
+   @@id([followerId, followingId])
+}
+
+
 
 model Tweet {
    id            String @id @default(cuid())

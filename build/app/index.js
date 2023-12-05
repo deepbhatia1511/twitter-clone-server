@@ -38,10 +38,11 @@ function initServer() {
             ${tweet_1.Tweet.bbb}
          }
          type Mutation {
+            ${user_1.User.cc}
             ${tweet_1.Tweet.ccc}
          }
       `,
-            resolvers: Object.assign(Object.assign({ Query: Object.assign(Object.assign({}, user_1.User.dd.bbresolver), tweet_1.Tweet.ddd.bbbresolver), Mutation: Object.assign({}, tweet_1.Tweet.ddd.cccresolver) }, user_1.User.dd.extraResolvers), tweet_1.Tweet.ddd.extraResolvers)
+            resolvers: Object.assign(Object.assign({ Query: Object.assign(Object.assign({}, user_1.User.dd.bbresolver), tweet_1.Tweet.ddd.bbbresolver), Mutation: Object.assign(Object.assign({}, user_1.User.dd.ccresolver), tweet_1.Tweet.ddd.cccresolver) }, user_1.User.dd.extraResolvers), tweet_1.Tweet.ddd.extraResolvers)
         });
         yield server.start();
         app.use('/graphql', (0, express4_1.expressMiddleware)(server, { context: ({ req, res }) => __awaiter(this, void 0, void 0, function* () {

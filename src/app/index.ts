@@ -25,6 +25,7 @@ export async function initServer() {
             ${Tweet.bbb}
          }
          type Mutation {
+            ${User.cc}
             ${Tweet.ccc}
          }
       `,
@@ -34,6 +35,7 @@ export async function initServer() {
             ...Tweet.ddd.bbbresolver
          },
          Mutation: {
+            ...User.dd.ccresolver,
             ...Tweet.ddd.cccresolver
          },
          ...User.dd.extraResolvers,
