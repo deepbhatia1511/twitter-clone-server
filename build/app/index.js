@@ -27,6 +27,9 @@ const tweet_1 = require("./tweet");
 const jwt_1 = __importDefault(require("../services/jwt"));
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
+        app.get("/", (req, res) => {
+            res.status(200).json({ message: "Everything is good!" });
+        });
         // GraphqlContext defines the structure of context object that can be passed to Apollo Server.
         const server = new server_1.ApolloServer({
             typeDefs: `                                               

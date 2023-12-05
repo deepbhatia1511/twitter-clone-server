@@ -14,6 +14,10 @@ import { GraphqlContext } from '../interfaces';
 import JWTService from '../services/jwt';
 
 export async function initServer() {
+   app.get("/", (req, res) => {
+      res.status(200).json({ message: "Everything is good!"})
+   })
+   
    // GraphqlContext defines the structure of context object that can be passed to Apollo Server.
    const server = new ApolloServer<GraphqlContext>({ 
       typeDefs: `                                               
